@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Interactive Viewer Exploring Motor Trend Cars Dataset</title>
+  <meta charset="utf-8">
+  <meta name="description" content="Interactive Viewer Exploring Motor Trend Cars Dataset">
+  <meta name="author" content="Kevin">
+  <meta name="generator" content="slidify" />
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta http-equiv="X-UA-Compatible" content="chrome=1">
+  <link rel="stylesheet" href="../../libraries/frameworks/io2012/css/default.css" media="all" >
+  <link rel="stylesheet" href="../../libraries/frameworks/io2012/css/phone.css" 
+    media="only screen and (max-device-width: 480px)" >
+  <link rel="stylesheet" href="../../libraries/frameworks/io2012/css/slidify.css" >
+  <link rel="stylesheet" href="../../libraries/highlighters/highlight.js/css/zenburn.css" />
+  <base target="_blank"> <!-- This amazingness opens all links in a new tab. -->  
+  
+  <!-- Grab CDN jQuery, fall back to local if offline -->
+  <script src="http://ajax.aspnetcdn.com/ajax/jQuery/jquery-1.7.min.js"></script>
+  <script>window.jQuery || document.write('<script src="../../libraries/widgets/quiz/js/jquery.js"><\/script>')</script> 
+  <script data-main="../../libraries/frameworks/io2012/js/slides" 
+    src="../../libraries/frameworks/io2012/js/require-1.0.8.min.js">
+  </script>
+  
+  
+
+</head>
+<body style="opacity: 0">
+  <slides class="layout-widescreen">
+    
+    <!-- LOGO SLIDE -->
+        <slide class="title-slide segue nobackground">
+  <hgroup class="auto-fadein">
+    <h1>Interactive Viewer Exploring Motor Trend Cars Dataset</h1>
+    <h2></h2>
+    <p>Kevin<br/>Dude</p>
+  </hgroup>
+  <article></article>  
+</slide>
+    
+
+    <!-- SLIDES -->
+    <slide class="" id="slide-1" style="background:;">
+  <hgroup>
+    <h2>Introduction</h2>
+  </hgroup>
+  <article data-timings="">
+    <p>My app uses the mtcar dataset and the features of ggplot and shiney.  </p>
+
+<p>Please check it out at...<br>
+<a href="https://kcompher.shinyapps.io/carExplorer/">https://kcompher.shinyapps.io/carExplorer/</a></p>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="class" id="id" style="background:;">
+  <hgroup>
+    <h2>Libraries required</h2>
+  </hgroup>
+  <article data-timings="">
+    <p>Here are the libraries use</p>
+
+<pre><code class="r">library(shiny)
+library(ggplot2)
+library(datasets)
+</code></pre>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="class" id="id" style="background:;">
+  <hgroup>
+    <h2>UI.R code</h2>
+  </hgroup>
+  <article data-timings="">
+    <pre><code class="r">dataset &lt;- mtcars
+shinyUI(pageWithSidebar(
+
+  headerPanel(&quot;Car Explorer&quot;),
+
+  sidebarPanel(
+
+    sliderInput(&#39;sampleSize&#39;, &#39;Number of cars to sample&#39;, min = 1, max=32,
+                value = 15, step = 1, round=0),
+
+    selectInput(&#39;x&#39;, &#39;X&#39;, names(dataset)),
+    selectInput(&#39;y&#39;, &#39;Y&#39;, names(dataset), names(dataset)[[2]]),
+    selectInput(&#39;color&#39;, &#39;Color&#39;, c(&#39;None&#39;, names(dataset))),
+
+    checkboxInput(&#39;jitter&#39;, &#39;Jitter&#39;),
+    checkboxInput(&#39;smooth&#39;, &#39;Smooth&#39;),
+
+    selectInput(&#39;facet_row&#39;, &#39;Facet Row&#39;, c(None=&#39;.&#39;, names(dataset))),
+    selectInput(&#39;facet_col&#39;, &#39;Facet Column&#39;, c(None=&#39;.&#39;, names(dataset)))
+  ),
+
+  mainPanel(
+    plotOutput(&#39;plot&#39;)
+  )
+))
+</code></pre>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="class" id="id" style="background:;">
+  <hgroup>
+    <h2>Here is the Server.R code</h2>
+  </hgroup>
+  <article data-timings="">
+    <pre><code class="r">shinyServer(function(input, output) {
+  dataset &lt;- reactive(function() {
+    mtcars[sample(nrow(mtcars), input$sampleSize),]
+  })
+  output$plot &lt;- reactivePlot(function() {
+    p &lt;- ggplot(dataset(), aes_string(x=input$x, y=input$y)) + geom_point()
+    if (input$color != &#39;None&#39;)
+      p &lt;- p + aes_string(color=input$color) 
+  facets &lt;- paste(input$facet_row, &#39;~&#39;, input$facet_col)
+    if (facets != &#39;. ~ .&#39;)
+      p &lt;- p + facet_grid(facets)  
+    if (input$jitter)
+      p &lt;- p + geom_jitter()
+    if (input$smooth)
+      p &lt;- p + geom_smooth()
+    print(p)
+  }, height=700)
+})
+</code></pre>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="class" id="id" style="background:;">
+  <hgroup>
+    <h2>Conclusion</h2>
+  </hgroup>
+  <article data-timings="">
+    <p>This code is a great way to use the ggplot features to make an interactive data product.  </p>
+
+<p>The code was adapted from the Shiney Apps Grid Layout tutorial at...<br>
+<a href="http://shiny.rstudio.com/articles/layout-guide.html">http://shiny.rstudio.com/articles/layout-guide.html</a>  </p>
+
+<p>Hope your found it interesting too!</p>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+    <slide class="backdrop"></slide>
+  </slides>
+  <div class="pagination pagination-small" id='io2012-ptoc' style="display:none;">
+    <ul>
+      <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=1 title='Introduction'>
+         1
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=2 title='Libraries required'>
+         2
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=3 title='UI.R code'>
+         3
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=4 title='Here is the Server.R code'>
+         4
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=5 title='Conclusion'>
+         5
+      </a>
+    </li>
+  </ul>
+  </div>  <!--[if IE]>
+    <script 
+      src="http://ajax.googleapis.com/ajax/libs/chrome-frame/1/CFInstall.min.js">  
+    </script>
+    <script>CFInstall.check({mode: 'overlay'});</script>
+  <![endif]-->
+</body>
+  <!-- Load Javascripts for Widgets -->
+  
+  <!-- LOAD HIGHLIGHTER JS FILES -->
+  <script src="../../libraries/highlighters/highlight.js/highlight.pack.js"></script>
+  <script>hljs.initHighlightingOnLoad();</script>
+  <!-- DONE LOADING HIGHLIGHTER JS FILES -->
+   
+  </html>
